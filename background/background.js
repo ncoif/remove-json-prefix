@@ -1,11 +1,10 @@
 
+//https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/filterResponseData
+
 async function initialize() {
   await initializeOptions();
 }
 initialize();
-
-//https://www.theguardian.com/politics/2018/jan/18/taxpayers-to-foot-200bn-bill-for-pfi-contracts-audit-office
-//?utm_source=esp&utm_medium=Email&utm_campaign=GU+Today+main+NEW+H+categories&utm_term=260850&subid=22703671&CMP=EMCNEWEML6619I2
 
 var isExtensionEnabled = true;
 
@@ -36,7 +35,7 @@ function updateIconState() {
   }
 
   browser.browserAction.setTitle({
-    title: 'Utm Blocker ' + ((iconState === 'active') ? '' : ' (' + iconState + ')')
+    title: 'JSon prefix remover ' + ((iconState === 'active') ? '' : ' (' + iconState + ')')
   });
 }
 

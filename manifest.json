@@ -6,14 +6,14 @@
   },
 
   "manifest_version": 2,
-  "name": "block-utm",
-  "version": "2018.1.22",
+  "name": "remove-json-prefix",
+  "version": "2019.4.12",
 
-  "description": "Rewrite urls to remove utm tracking",
+  "description": "Remove JSon highjacking prefix",
 
   "developer": {
     "name": "ncoif",
-    "url": "https://github.com/ncoif/block-utm"
+    "url": "https://github.com/ncoif/remove-json-prefix"
   },
 
   "icons": {
@@ -30,7 +30,7 @@
   "browser_action": {
     "browser_style": false,
     "default_icon": "icons/icon-active-32.png",
-    "default_title": "Utm Blocker",
+    "default_title": "Remove JSon prefix",
     "default_popup": "popup/popup.html"
   },
 
