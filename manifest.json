@@ -1,0 +1,41 @@
+{
+  "applications": {
+    "gecko": {
+      "id": "ncoif@gmx.com"
+    }
+  },
+
+  "manifest_version": 2,
+  "name": "block-utm",
+  "version": "2018.1.22",
+
+  "description": "Rewrite urls to remove utm tracking",
+
+  "developer": {
+    "name": "ncoif",
+    "url": "https://github.com/ncoif/block-utm"
+  },
+
+  "icons": {
+      "48": "icons/icon-active-48.png"
+    },
+
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "<all_urls>"
+  ],
+
+  "browser_action": {
+    "browser_style": false,
+    "default_icon": "icons/icon-active-32.png",
+    "default_title": "Utm Blocker",
+    "default_popup": "popup/popup.html"
+  },
+
+  "background": {
+    "scripts": ["background/background.js"]
+  }
+
+}
