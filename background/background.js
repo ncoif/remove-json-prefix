@@ -1,5 +1,6 @@
 
 //https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/filterResponseData
+//https://github.com/bhollis/jsonview/
 
 async function initialize() {
   await initializeOptions();
@@ -48,55 +49,37 @@ browser.storage.onChanged.addListener(async function(changes, areaName) {
   }
 });
 
-var strippedParams = [
-  "utm_source",   // This is the source of the link Example: Search Engine, another domain, or name of email list
-  "utm_medium",   // This is the method of delivery. EX: Postcard, Email, or Banner Ad
-  "utm_campaign", // This is a name that helps you keep track of your different campaign efforts Example: Fall_Drive, Christmas_Special
-  "utm_term",     // This is a used to identify paid keywords. Example: speakers, monitors, shoes
-  "utm_content"   // This is for split testing or separating two ads that go to the same URL
-]
+// Look for JSON if the content type is "application/json",
+// or "application/whatever+json" or "application/json; charset=utf-8"
+var jsonContentType = /^application\/([a-z]+\+)?json($|;)/;
 
-function removeParam(key, sourceURL) {
-    var rtn = sourceURL.split("?")[0],
-        param,
-        params_arr = [],
-        queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
-    if (queryString !== "") {
-        params_arr = queryString.split("&");
-        for (var i = params_arr.length - 1; i >= 0; i -= 1) {
-            param = params_arr[i].split("=")[0];
-            if (param === key) {
-                params_arr.splice(i, 1);
-            }
-        }
-        rtn = rtn + "?" + params_arr.join("&");
-    }
-    return rtn;
-}
-
-function stripUtm(url) {
-  var alteredUrl = url;
-  for (var i in strippedParams) {
-    var key = strippedParams[i];
-    alteredUrl = removeParam(key, alteredUrl);
-  }
-
-  if (alteredUrl !== url) {
-    console.log("Stripped url to: " + alteredUrl);
-    return alteredUrl;
-  }
-}
-
-function onBeforeRequest(details) {
+function detectJSON(event) {
   // if the extension has been disabled by the user, return directly
   if (!isExtensionEnabled) {
     return;
   }
 
-  var targetUrl = stripUtm(details.url);
-  if (typeof targetUrl !== 'undefined') {
-    return {redirectUrl: targetUrl};
+  // if there is no headers, return directly
+  if (!event.responseHeaders) {
+    return;
   }
+
+  var arrayLength = event.responseHeaders.length;
+  for (var i = 0; i < arrayLength; i++) {
+    var header = event.responseHeaders[i];
+    console.log(header);
+    if (header.name.toLowerCase() === "content-type" && header.value && jsonContentType.test(header.value)) {
+      console.log("Detected JSON content-type, attempting to remove potential prefix");
+      //TODO
+    }
+  }
+
+  // return the original response headers
+  return { responseHeaders: event.responseHeaders };
 }
 
-browser.webRequest.onBeforeRequest.addListener(onBeforeRequest, {urls: ["*://*/*"]}, ["blocking"]);
+chrome.webRequest.onHeadersReceived.addListener(
+  detectJSON,
+  { urls: ["<all_urls>"], types: ["main_frame"] },
+  ["blocking", "responseHeaders"]
+);
