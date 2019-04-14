@@ -3,7 +3,7 @@
 #https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Publishing_your_WebExtension
 SCRIPT=`realpath $0`
 SCRIPTPATH=`dirname $SCRIPT`
-ARCHIVENAME=block-utm
+ARCHIVENAME=remove-json-prefix
 
 echo "Cleaning up target directory..."
 rm -Rf $SCRIPTPATH/target

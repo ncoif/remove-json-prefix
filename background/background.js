@@ -1,6 +1,4 @@
-
-//https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/filterResponseData
-//https://github.com/bhollis/jsonview/
+"use strict";
 
 async function initialize() {
   await initializeOptions();
@@ -53,6 +51,10 @@ browser.storage.onChanged.addListener(async function(changes, areaName) {
 // or "application/whatever+json" or "application/json; charset=utf-8"
 var jsonContentType = /^application\/([a-z]+\+)?json($|;)/;
 
+// https://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx/
+// the highjacking prefix is )]}, which we escape in \)]} and only remove it for the start of the string with ^
+var jsonPrefixRegex = /^\)]}', /;
+
 function detectJSON(event) {
   // if the extension has been disabled by the user, return directly
   if (!isExtensionEnabled) {
@@ -67,15 +69,31 @@ function detectJSON(event) {
   var arrayLength = event.responseHeaders.length;
   for (var i = 0; i < arrayLength; i++) {
     var header = event.responseHeaders[i];
-    console.log(header);
     if (header.name.toLowerCase() === "content-type" && header.value && jsonContentType.test(header.value)) {
-      console.log("Detected JSON content-type, attempting to remove potential prefix");
-      //TODO
+      filterHighjackPrefix(event, header.value);
     }
   }
 
   // return the original response headers
   return { responseHeaders: event.responseHeaders };
+}
+
+function filterHighjackPrefix(details, contentType) {
+  let filter = browser.webRequest.filterResponseData(details.requestId);
+  let decoder = new TextDecoder("utf-8");
+  let encoder = new TextEncoder();
+
+  filter.ondata = event => {
+    let str = decoder.decode(event.data, {stream: true});
+    if (jsonPrefixRegex.test(str)) {
+      console.log("Prefix \")]}, \" detected for content-type \"" + contentType + "\", removing prefix for better display")
+    }
+    str = str.replace(jsonPrefixRegex, '');
+    filter.write(encoder.encode(str));
+    filter.disconnect();
+  }
+
+  return {};
 }
 
 chrome.webRequest.onHeadersReceived.addListener(
