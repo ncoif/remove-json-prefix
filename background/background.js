@@ -48,8 +48,8 @@ browser.storage.onChanged.addListener(async function(changes, areaName) {
 });
 
 // Look for JSON if the content type is "application/json",
-// or "application/whatever+json" or "application/json; charset=utf-8"
-var jsonContentType = /^application\/([a-z]+\+)?json($|;)/;
+// or "application/whatever+json" or "application/json; charset=utf-8" or "application/vnd.spring-boot.actuator.v2+json"
+var jsonContentType = /^application\/(.+\+)?json($|;)/;
 
 // https://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx/
 // the highjacking prefix is )]}, which we escape in \)]} and only remove it for the start of the string with ^

@@ -7,7 +7,7 @@
 
   "manifest_version": 2,
   "name": "remove-json-prefix",
-  "version": "2019.4.14",
+  "version": "2019.4.18",
 
   "description": "Remove JSon highjacking prefix. See https://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx/",
 
